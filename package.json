@@ -1,0 +1,18 @@
+{
+  "name": "watch-auto-deploy",
+  "version": "1.0.0",
+  "description": "主要是在服务器上工作，监听目标文件夹/目标文件，发生变化就自动执行部署命令。",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build": "sh build.sh"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "md5": "^2.3.0"
+  },
+  "dependencies": {
+    "execa": "^5.1.1"
+  }
+}

@@ -1,0 +1,8 @@
+node_modules/
+
+server.pwd
+
+watch-auto-deploy.tar.gz
+package-lock.json
+temp/
+temp2/
