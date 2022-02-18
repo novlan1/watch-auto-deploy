@@ -5,11 +5,13 @@ const execa = require('execa');
 // const WATCH_PATH = path.resolve(__dirname, '../temp');
 // const DEPLOY_PATH = path.resolve(__dirname, '../temp2');
 
+const IS_GROUP = true;
 
 // 监听目录
-const WATCH_PATH = '/root/watch-to-deploy-dir';
+const WATCH_PATH = IS_GROUP ? '/root/guowangyang/watch-to-deploy-dir' : '/root/watch-to-deploy-dir';
+
 // 项目部署目录
-const DEPLOY_PATH = '/root/deploy-dir';
+const DEPLOY_PATH = IS_GROUP ? '/root/guowangyang/deploy-dir' : '/root/deploy-dir';
 
 const fileStatMap = new Map()
 

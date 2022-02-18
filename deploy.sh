@@ -13,12 +13,18 @@ getHostInfo hostPwd
 
 
 rm -rf ./$tarFileName
-tar --exclude=node_modules/ --exclude=test/ --exclude=output/ --exclude=build.sh -zcvf $tarFileName ./*
+tar --exclude=node_modules/ --exclude=test/ --exclude=output/ --exclude=deploy.sh -zcvf $tarFileName ./*
 
+
+if [[ $hostName =~ "155.199" ]];then
+    targetDir=/root/ft_local
+else
+    targetDir=/root/guowangyang/ft_local
+fi
 
 expect -c "
         set timeout 1200;
-        spawn scp -P 36000 -r $tarFileName root@$hostName:/root/ft_local
+        spawn scp -P 36000 -r $tarFileName root@$hostName:$targetDir
         expect {
                 \"*yes/no*\" {send \"yes\r\"; exp_continue}
                 \"*password*\" {send \"$hostPwd\r\";}
