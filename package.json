@@ -4,7 +4,8 @@
   "description": "主要是在服务器上工作，监听目标文件夹/目标文件，发生变化就自动执行部署命令。",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "start": "NODE_ENV=production node src/index.js",
     "deploy": "sh deploy.sh"
   },
   "author": "",

@@ -4,5 +4,8 @@ server.pwd
 
 watch-auto-deploy.tar.gz
 package-lock.json
+
 temp/
 temp2/
+temp3/
+temp5/

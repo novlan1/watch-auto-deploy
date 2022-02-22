@@ -2,18 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const execa = require('execa');
 
-// const WATCH_PATH = path.resolve(__dirname, '../temp');
-// const DEPLOY_PATH = path.resolve(__dirname, '../temp2');
+const { getWatchAndDeployPath } = require('./utils')
 
 const IS_GROUP = true;
 
-// 监听目录
-const WATCH_PATH = IS_GROUP ? '/root/guowangyang/watch-to-deploy-dir' : '/root/watch-to-deploy-dir';
-
-// 项目部署目录
-const DEPLOY_PATH = IS_GROUP ? '/root/guowangyang/deploy-dir' : '/root/deploy-dir';
-
-const fileStatMap = new Map()
+const watchAndDeployPath = getWatchAndDeployPath(IS_GROUP)
 
 
 function getStatInfo(info) {
@@ -22,10 +15,19 @@ function getStatInfo(info) {
   return stat
 }
 
-async function main() {
-  fs.readdir(WATCH_PATH, 'utf-8', async (err, data) => {
+function initFileStat(watchPath, deployPath, fileStatMap) {
+  if (!fs.existsSync(watchPath)) {
+    console.log('\x1B[31m%s\x1B[0m', '\n监听目录不存在\n');
+    return;
+  }
+  if (!fs.existsSync(deployPath)) {
+    console.log('\x1B[31m%s\x1B[0m', '\n部署目录不存在！\n');
+    return;
+  }
+
+  fs.readdir(watchPath, 'utf-8', async (err, data) => {
     data.map(item => {
-      const info = fs.statSync(path.resolve(WATCH_PATH, item))
+      const info = fs.statSync(path.resolve(watchPath, item))
 
       if (info.isFile()) {
         fileStatMap.set(item, getStatInfo(info))
@@ -33,13 +35,19 @@ async function main() {
       }
     })
 
-    await watch()
+    await watch(watchPath, deployPath, fileStatMap)
   })
 }
 
-async function watch() {
-  fs.watch(WATCH_PATH, {}, async (eventType, filename) => {
-    const info = fs.statSync(path.resolve(WATCH_PATH, filename))
+async function main() {
+  watchAndDeployPath.map(item => {
+    initFileStat(item.watchPath, item.deployPath, item.fileStatMap)
+  })
+}
+
+async function watch(watchPath, deployPath, fileStatMap) {
+  fs.watch(watchPath, {}, async (eventType, filename) => {
+    const info = fs.statSync(path.resolve(watchPath, filename))
     
     const stat = getStatInfo(info)
     const originStat = fileStatMap.get(filename)
@@ -49,7 +57,7 @@ async function watch() {
       console.log(`stat: ${stat}, originStat: ${originStat}`)
 
       try {
-        await deploy(filename)
+        await deploy(filename, watchPath, deployPath)
       } catch(err) {
         console.log(`err: ${err}`)
       }
@@ -57,12 +65,12 @@ async function watch() {
   })
 }
 
-async function deploy(filename) {
+async function deploy(filename, watchPath, deployPath,) {
   // 默认都是以 .tar.gz 结尾
 
   const project = filename.replace(/\.tar\.gz$/, '')
-  const targetDir = path.resolve(DEPLOY_PATH, project)
-  const sourceFile = path.resolve(WATCH_PATH, filename);
+  const targetDir = path.resolve(deployPath, project)
+  const sourceFile = path.resolve(watchPath, filename);
 
   if (!fs.existsSync( sourceFile ) ) {
     return
