@@ -47,15 +47,21 @@ async function main() {
 
 async function watch(watchPath, deployPath, fileStatMap) {
   fs.watch(watchPath, {}, async (eventType, filename) => {
-    const info = fs.statSync(path.resolve(watchPath, filename))
+    const curFilePath = path.resolve(watchPath, filename)
+
+    if (!fs.existsSync(curFilePath)) {
+      console.log('\x1B[32m%s\x1B[0m', `删除了文件: ${curFilePath}\n`, );
+      return
+    }
+    const info = fs.statSync(curFilePath)
     
     const stat = getStatInfo(info)
     const originStat = fileStatMap.get(filename)
 
     if (originStat !== stat) {
       fileStatMap.set(filename, stat)
-      console.log(`stat: ${stat}, originStat: ${originStat}`)
-
+      console.log('\x1B[32m%s\x1B[0m', `stat: ${stat}`);
+      console.log('\x1B[32m%s\x1B[0m', `originStat: ${originStat}\n`);
       try {
         await deploy(filename, watchPath, deployPath)
       } catch(err) {
@@ -84,16 +90,17 @@ async function deploy(filename, watchPath, deployPath,) {
   
   // 以 backend 结尾则证明是后端项目，还可以补充对启动命令的判断等
   if (project.endsWith('backend') || fs.existsSync(path.resolve(targetDir, 'ecosystem.config.js'))) {
-    console.log('后端项目！')
+    console.log('\x1B[32m%s\x1B[0m', '\n后端项目！\n');
     await deployBackendProject(targetDir)
   }
 }
 
 async function unzip(targetDir, sourceFile) {
-  console.log(`sourceFile: ${sourceFile}, targetDir: ${targetDir}`)
+  console.log('\x1B[32m%s\x1B[0m', `sourceFile: ${sourceFile}`);
+  console.log('\x1B[32m%s\x1B[0m', `targetDir: ${targetDir}\n`);
 
   const { stdout } = await execa.command(`tar -zxvf ${sourceFile} -C ${targetDir}`);
-  console.log(`stdout: ${stdout}`)
+  console.log('\x1B[32m%s\x1B[0m', `stdout: ${stdout}\n`);
 }
 
 // 部署NodeJS后台项目
