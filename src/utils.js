@@ -1,9 +1,12 @@
+const path = require('path');
+const { readEnv } = require('read-file-env')
 const { 
   MY_WATCH_DEPLOY_PATH, 
   GROUP_WATCH_DEPLOY_PATH, 
   DEV_WATCH_DEPLOY_PATH 
 } = require('./config');
 
+const ENV_FILE_NAME = '.env.local'
 const isDev = process.env.NODE_ENV !== 'production';
 
 function getWatchAndDeployPath(isGroup) {
@@ -20,6 +23,17 @@ function getWatchAndDeployPath(isGroup) {
   }));
 }
 
+function judgeGroup() {
+  const hostName = readEnv('hostName', path.resolve(__dirname, `../${ENV_FILE_NAME}`));
+  console.log('\x1B[33m%s\x1B[0m', `hostName: ${hostName}\n`);
+
+  if (hostName.endsWith('54.128')) {
+    return true;
+  }
+  return false
+}
+
 module.exports = {
-  getWatchAndDeployPath
+  getWatchAndDeployPath,
+  judgeGroup,
 }

@@ -1,12 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const execa = require('execa');
+const { getWatchAndDeployPath, judgeGroup } = require('./utils')
 
-const { getWatchAndDeployPath } = require('./utils')
+const isGroup = judgeGroup()
 
-const IS_GROUP = true;
-
-const watchAndDeployPath = getWatchAndDeployPath(IS_GROUP)
+const watchAndDeployPath = getWatchAndDeployPath(isGroup)
 
 
 function getStatInfo(info) {
@@ -89,7 +88,7 @@ async function deploy(filename, watchPath, deployPath,) {
   await unzip(targetDir, sourceFile)
   
   // 以 backend 结尾则证明是后端项目，还可以补充对启动命令的判断等
-  if (project.endsWith('backend') || fs.existsSync(path.resolve(targetDir, 'ecosystem.config.js'))) {
+  if (project.endsWith('backend') || pm2ConfigExist()) {
     console.log('\x1B[32m%s\x1B[0m', '\n后端项目！\n');
     await deployBackendProject(targetDir)
   }
@@ -103,6 +102,10 @@ async function unzip(targetDir, sourceFile) {
   console.log('\x1B[32m%s\x1B[0m', `stdout: ${stdout}\n`);
 }
 
+function pm2ConfigExist() {
+  return !!fs.existsSync(path.resolve(targetDir, 'ecosystem.config.js'))
+}
+
 // 部署NodeJS后台项目
 async function deployBackendProject(targetDir) {
   try {
@@ -110,15 +113,17 @@ async function deployBackendProject(targetDir) {
       cwd: targetDir
     });
 
-    const { stdout: stdout2 }  = await execa.command(` pm2 start`, {
-      cwd: targetDir
-     });
-     
-    console.log(`stdout: ${stdout}, stdout2: ${stdout2}`)
+    console.log(`stdout: ${stdout}`)
+
+    if (pm2ConfigExist()) {
+      const { stdout: stdout2 }  = await execa.command(` pm2 start`, {
+        cwd: targetDir
+       });
+      console.log(`stdout2: ${stdout2}`)
+    }
   } catch (err) {
     console.log(`${err}`)
   }
-  
 }
 
 
