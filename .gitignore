@@ -1,6 +1,6 @@
 node_modules/
 
-server.pwd
+.env.local
 
 watch-auto-deploy.tar.gz
 package-lock.json
