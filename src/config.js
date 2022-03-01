@@ -16,11 +16,11 @@ const MY_WATCH_DEPLOY_PATH = [{
 }]
 
 const DEV_WATCH_DEPLOY_PATH = [{
-  watchPath: path.resolve(__dirname, '../temp'),
-  deployPath: path.resolve(__dirname, '../temp2'),
+  watchPath: path.resolve(__dirname, '../.temp'),
+  deployPath: path.resolve(__dirname, '../.temp2'),
 }, {
-  watchPath: path.resolve(__dirname, '../temp3'),
-  deployPath: path.resolve(__dirname, '../temp5'),
+  watchPath: path.resolve(__dirname, '../.temp3'),
+  deployPath: path.resolve(__dirname, '../.temp5'),
 }]
 
 module.exports = {

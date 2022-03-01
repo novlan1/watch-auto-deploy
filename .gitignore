@@ -2,10 +2,10 @@ node_modules/
 
 .env.local
 
-watch-auto-deploy.tar.gz
+watch-auto-deploy-backend.tar.gz
 package-lock.json
 
-temp/
-temp2/
-temp3/
-temp5/
+.temp/
+.temp2/
+.temp3/
+.temp5/

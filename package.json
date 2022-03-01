@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "node src/index.js",
     "start": "NODE_ENV=production node src/index.js",
-    "deploy": "sh deploy.sh"
+    "deploy": "deploy 1 '/root/ft_local'"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "deploy-bash": "0.0.2",
     "md5": "^2.3.0"
   },
   "dependencies": {
